@@ -1,14 +1,11 @@
 package com.shorman.retrofit_with_search.ui
 
+import android.graphics.drawable.AnimationDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.SearchView
-import android.widget.Spinner
+import android.widget.*
 import androidx.activity.viewModels
-import androidx.lifecycle.Observer
 import com.shorman.retrofit_with_search.Adapter.CoronaAdapter
 import com.shorman.retrofit_with_search.R
 import com.shorman.retrofit_with_search.utility.Resuorce
@@ -27,7 +24,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        spinner.setSelection(2)
+        val animation = constraint.background as AnimationDrawable
+        animation.setEnterFadeDuration(2000)
+        animation.setExitFadeDuration(2000)
+        animation.start()
 
         adapter = CoronaAdapter()
         spinnerAdapter = ArrayAdapter<String>(this,android.R.layout.simple_selectable_list_item,countryList)
@@ -36,7 +36,20 @@ class MainActivity : AppCompatActivity() {
 
         svCountry.setOnQueryTextListener(object :SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
-                viewModel.getCoronaCases(query!!)
+                if(query.equals(".") || query.equals("..")){
+                    Toast.makeText(applicationContext,"you cant user . or .. for search",Toast.LENGTH_SHORT).show()
+                }
+                else if (query !in countryList){
+                    tvNothingFound.visibility = View.VISIBLE
+                    rvItems.visibility = View.INVISIBLE
+                    tvNothingFound.text = "No such country with name $query \nlook at the spinner in the right corner for all country names"
+                    adapter.notifyDataSetChanged()
+                }
+                else{
+                    viewModel.getCoronaCases(query!!)
+                    rvItems.visibility = View.VISIBLE
+                }
+
                 return true
             }
 
@@ -46,6 +59,8 @@ class MainActivity : AppCompatActivity() {
 
         })
 
+        subscribeToObserver()
+
         spinner.onItemSelectedListener =object :AdapterView.OnItemSelectedListener{
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -54,15 +69,12 @@ class MainActivity : AppCompatActivity() {
                 id: Long
             ) {
                 svCountry.setQuery(spinnerAdapter.getItem(position).toString(),true)
+                adapter.notifyDataSetChanged()
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                svCountry.setQuery("amman",true)
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
 
         }
-
-        subscribeToObserver()
 
     }
 
@@ -84,23 +96,21 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        viewModel.countries.observe(this, Observer {
+        viewModel.countries.observe(this,  {
             when(it){
                 is Resuorce.Loading-> progressBar.visibility = View.VISIBLE
                 is Resuorce.Success -> {
                     for (i in it.data!!){
-                        countryList.add(i.Country)
+                        countryList.add(i.Country.toLowerCase())
                     }
+                    countryList.sort()
                     spinnerAdapter.notifyDataSetChanged()
                 }
             }
         })
 
-        viewModel.coronaCases.observe(this, Observer {
-
-
+        viewModel.coronaCases.observe(this,  {
             when(it){
-
                 is Resuorce.Loading ->{
                     progressBar.visibility  = View.VISIBLE
                     tvNothingFound.visibility  = View.GONE
@@ -108,6 +118,7 @@ class MainActivity : AppCompatActivity() {
 
                 is Resuorce.Success ->{
                     if(it.data?.isEmpty()!!){
+                        progressBar.visibility = View.GONE
                         tvNothingFound.visibility  = View.VISIBLE
                         tvNothingFound.text = "Nothing found for ${svCountry.query}"
                     }

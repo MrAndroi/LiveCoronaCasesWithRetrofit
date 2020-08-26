@@ -20,7 +20,6 @@ class MainViewModel @ViewModelInject constructor(val api:CoronaApi):ViewModel() 
     var nothingFound = MutableLiveData<Boolean>()
 
     init {
-        getCoronaCases("")
         getCountries()
         nothingFound.value=  false
 

@@ -13,7 +13,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="500"
-        android:textColor="#000000"
+        android:padding="5dp"
+        android:background="@drawable/text_list_bg"
+        android:textColor="#fff"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvCountryName" />
@@ -24,7 +26,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Jordan"
-        android:textColor="#000000"
+        android:padding="5dp"
+        android:background="@drawable/text_list_bg"
+        android:textColor="#fff"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,6 +41,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="2020/8/23"
+        android:padding="5dp"
+        android:background="@drawable/text_list_bg"
+        android:textColor="#fff"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvNumberOfCases" />
 </androidx.constraintlayout.widget.ConstraintLayout>

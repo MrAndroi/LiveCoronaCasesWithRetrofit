@@ -1,5 +1,6 @@
 package com.shorman.retrofit_with_search.Adapter
 
+import android.graphics.drawable.AnimationDrawable
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
@@ -43,6 +44,23 @@ class CoronaAdapter :RecyclerView.Adapter<CoronaAdapter.CoronaViewHolder>() {
         val coronaCase = differ.currentList[position]
 
         holder.itemView.apply {
+            val animation1 = tvCountryName.background as AnimationDrawable
+            val animation2 = tvDate.background as AnimationDrawable
+            val animation3 = tvNumberOfCases.background as AnimationDrawable
+
+            animation1.setEnterFadeDuration(2000)
+            animation1.setExitFadeDuration(2000)
+            animation1.start()
+
+            animation2.setEnterFadeDuration(2000)
+            animation2.setExitFadeDuration(2000)
+            animation2.start()
+
+            animation3.setEnterFadeDuration(2000)
+            animation3.setExitFadeDuration(2000)
+            animation3.start()
+
+
             tvCountryName.text = coronaCase.Country
             tvNumberOfCases.text = coronaCase.Cases.toString()
             val date = coronaCase.Date.substring(0,10)
